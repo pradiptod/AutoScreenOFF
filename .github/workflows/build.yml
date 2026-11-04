@@ -22,6 +22,12 @@ jobs:
           gradle-version: '8.9'
       - name: Extract project
         run: unzip -o AutoScreenOEM-cloud-build.zip
+      - name: Prepare build directory
+        working-directory: AutoScreenOEM-cloud-build
+        run: |
+          rm -rf app/build
+          mkdir -p app/build
+          chmod -R u+rwX .
       - name: Build APK
         working-directory: AutoScreenOEM-cloud-build
         run: gradle --no-daemon --project-cache-dir "$RUNNER_TEMP/gradle-project-cache" assembleDebug
