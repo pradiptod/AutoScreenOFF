@@ -22,6 +22,10 @@ jobs:
           gradle-version: '8.9'
       - name: Extract project
         run: unzip -o AutoScreenOEM-cloud-build.zip
+      - name: Fix Android manifest
+        working-directory: AutoScreenOEM-cloud-build
+        run: |
+          sed -i '/android:description="Izinkan AutoScreen mengunci display untuk mematikannya"/d' app/src/main/AndroidManifest.xml
       - name: Prepare build directory
         working-directory: AutoScreenOEM-cloud-build
         run: |
