@@ -55,7 +55,7 @@ jobs:
                 jvmTarget = "17"
             }
         }
-    
+    EOF
       - name: Build APK
         working-directory: AutoScreenOEM-cloud-build
         run: |
