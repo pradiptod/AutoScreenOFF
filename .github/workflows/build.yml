@@ -39,22 +39,22 @@ jobs:
         run: |
           sed -i '/android:description="Izinkan AutoScreen mengunci display untuk mematikannya"/d' app/src/main/AndroidManifest.xml
       - name: Fix JVM target
-        working-directory: AutoScreenOEM-cloud-build
-        run: |
-        cat >> app/build.gradle.kts <<'EOF'
+  working-directory: AutoScreenOEM-cloud-build
+  run: |
+    cat >> app/build.gradle.kts <<'EOF'
 
-        android {
-            compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_17
-                targetCompatibility = JavaVersion.VERSION_17
-            }
+    android {
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
+    }
 
-        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "17"
         }
+    }
     EOF
       - name: Build APK
         working-directory: AutoScreenOEM-cloud-build
