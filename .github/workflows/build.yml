@@ -25,9 +25,8 @@ jobs:
       - name: Prepare build directory
         working-directory: AutoScreenOEM-cloud-build
         run: |
-          rm -rf app/build
-          mkdir -p app/build
           chmod -R u+rwX .
+          mkdir -p app/build
       - name: Build APK
         working-directory: AutoScreenOEM-cloud-build
         run: gradle --no-daemon --project-cache-dir "$RUNNER_TEMP/gradle-project-cache" assembleDebug
