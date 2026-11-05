@@ -3,7 +3,8 @@ name: Build AutoScreen OEM
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -11,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -30,22 +32,35 @@ jobs:
         run: unzip -o AutoScreenOEM-cloud-build.zip
 
       - name: Fix permissions
-        run: |
-          chmod -R u+rwX AutoScreenOEM-cloud-build
-          chmod -R u+rwX "$RUNNER_TEMP"
+        run: chmod -R u+rwX AutoScreenOEM-cloud-build
 
       - name: Fix Android manifest
         working-directory: AutoScreenOEM-cloud-build
         run: |
           sed -i '/android:description="Izinkan AutoScreen mengunci display untuk mematikannya"/d' app/src/main/AndroidManifest.xml
+
       - name: Fix JVM target
-  working-directory: AutoScreenOEM-cloud-build
-  run: |
-    sed -i 's/VERSION_1_8/VERSION_17/g; s/"1.8"/"17"/g' app/build.gradle.kts
-      - name: Build APK
         working-directory: AutoScreenOEM-cloud-build
         run: |
-          gradle --no-daemon --project-cache-dir "$RUNNER_TEMP/gradle-project-cache" assembleDebug
+          cat >> app/build.gradle.kts <<'EOF'
+
+          android {
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+          }
+
+          tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+          }
+          EOF
+
+      - name: Build APK
+        working-directory: AutoScreenOEM-cloud-build
+        run: gradle --no-daemon --project-cache-dir "$RUNNER_TEMP/gradle-project-cache" assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
